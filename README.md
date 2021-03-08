@@ -1,2 +1,2 @@
-# College-Codes
+## College-Codes
 **ALL FILES RELATED TO CLASS WILL BE HERE.**
