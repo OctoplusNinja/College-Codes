@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <math.h>
 
 typedef struct node
 {
@@ -8,11 +9,18 @@ typedef struct node
     struct node *right;
 } node;
 
+/*-----------TREE functions----------*/
 void insert(node **, int);
 void preorder_traverse(node *);
 void inorder_traverse(node *);
 void postorder_traverse(node *);
 void delete (node **, int);
+int height(node *);
+void bfs_display(node *);
+void printLevel(node *, int);
+
+/*-----------Utily functions--------*/
+int max(int, int);
 
 int main()
 {
@@ -20,17 +28,24 @@ int main()
     node *head = NULL;
     do
     {
-        printf("\n1. Insert\n");
-        printf("2. Delete\n");
-        printf("3. Preorder Traverse\n");
-        printf("4. Inorder Traverse\n");
-        printf("5. Postorder Traverse\n");
-        printf("6. Exit\n");
+        printf("\n\n1. Insert\n");
+        printf("2. Display\n");
+        printf("3. Height\n");
+        printf("4. Preorder Traverse\n");
+        printf("5. Inorder Traverse\n");
+        printf("6. Postorder Traverse\n");
+        printf("7. Delete\n");
+        printf("0. Exit\n");
         printf("\nEnter your choice: ");
         scanf("%d", &n);
         switch (n)
         {
+        case 0:
+        {
+            break;
+        }
         case 1:
+        {
             printf("\nEnter the number of elements you want to insert: ");
             scanf("%d", &num);
             int arr[100];
@@ -44,26 +59,61 @@ int main()
                 insert(&head, arr[i]);
             }
             break;
+        }
         case 2:
-            printf("\nEnter the Element you want to insert: ");
+        {
+            if (head == NULL)
+                printf("The Tree is Empty!!\n");
+            else
+                bfs_display(head);
+            break;
+        }
+        case 3:
+        {
+            int h = height(head);
+            if (h == -1)
+                printf("The Tree is Empty!!\n");
+            else
+                printf("Height of the tree: %d\n", h);
+            break;
+        }
+        case 4:
+        {
+            if (head == NULL)
+                printf("The Tree is Empty!!\n");
+            else
+                preorder_traverse(head);
+            break;
+        }
+        case 5:
+        {
+            if (head == NULL)
+                printf("The Tree is Empty!!\n");
+            else
+                inorder_traverse(head);
+            break;
+        }
+        case 6:
+        {
+            if (head == NULL)
+                printf("The Tree is Empty!!\n");
+            else
+                postorder_traverse(head);
+            break;
+        }
+        case 7:
+        {
+            printf("\nEnter the Element you want to Delete: ");
             scanf("%d", &num);
             delete (&head, num);
             break;
-        case 3:
-            preorder_traverse(head);
-            break;
-        case 4:
-            inorder_traverse(head);
-            break;
-        case 5:
-            postorder_traverse(head);
-            break;
-        case 6:
-            break;
+        }
         default:
+        {
             printf("\nInvalid choice!!\n");
         }
-    } while (n != 6);
+        }
+    } while (n);
 
     return 0;
 }
@@ -77,7 +127,7 @@ void insert(node **root, int num)
     {
         if (num == position->data)
         {
-            printf("\nDuplicate Item!\n");
+            printf("\nDuplicate Item!");
             return;
         }
         parent = position;
@@ -98,7 +148,7 @@ void insert(node **root, int num)
         parent->left = temp;
     else
         parent->right = temp;
-    printf("\n%d inserted into the tree succesfully!!\n", num);
+    printf("\n%d inserted into the tree succesfully!!", num);
     return;
 }
 
@@ -147,7 +197,7 @@ void delete (node **root, int num)
     }
     if (position == NULL)
     {
-        printf("\nNode containing %d doesn't exist!!", num);
+        printf("Node containing %d doesn't exist!!\n", num);
         return;
     }
     if (position->right == NULL && position->left == NULL)
@@ -187,7 +237,51 @@ void delete (node **root, int num)
         else
             parent->left = child;
     }
-    printf("\n%d Deleted!!\n", num);
+    printf("%d Deleted!!\n", num);
     free(position);
     return;
+}
+
+int height(node *root)
+{
+    if (root == NULL)
+    {
+        return -1;
+    }
+    return 1 + max(height(root->left), height(root->right));
+}
+
+void bfs_display(node *root)
+{
+    int h = height(root);
+    for (int i = 0; i <= h; i++)
+    {
+        for (int j = 0; j < (pow(2, h) - pow(2, i)) / 2; j++)
+        {
+            printf(" ");
+        }
+        printLevel(root, i);
+        printf("\n");
+    }
+}
+
+void printLevel(node *root, int level)
+{
+    if (root == NULL)
+    {
+        printf("- ");
+        return;
+    }
+    if (level == 0)
+        printf("%d ", root->data);
+    else if (level > 0)
+    {
+        printLevel(root->left, level - 1);
+        printLevel(root->right, level - 1);
+    }
+}
+
+int max(int a, int b)
+{
+    return a > b ? a : b;
 }
